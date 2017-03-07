@@ -145,17 +145,8 @@ class NeatNet {
         );
     }
 
-
     lerp(min, max, t) {
         let value = (min * (1.0 - t)) + (max * t);
-        return value;
-    }
-
-    lerpToInt(min, max, t) {
-        let rounded = math.round((min * (1.0 - t)) + (max * t));
-
-        let value = math.min(max, math.max(min, rounded));
-
         return value;
     }
 
