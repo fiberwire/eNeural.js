@@ -1,6 +1,7 @@
 require('jasmine');
 let Genome = require('../../src/genetics/genome');
 let options = require('../../src/options/test.json');
+let math = require('mathjs');
 
 describe('genome', () => {
 
@@ -12,14 +13,14 @@ describe('genome', () => {
 
     describe('.randomSequence()', () => {
 
-        it('Should produce a sequence of length 10', () => {
-            expect(genome.sequence.length).toEqual(10);
+        it(`Should produce a sequence of length ${options.sequenceLength}`, () => {
+            expect(genome.sequence.length).toEqual(options.sequenceLength);
         });
 
-        it('Should generate numbers between 0 and 1', () => {
+        it(`Should generate numbers between ${options.minValue} and ${options.maxValue}`, () => {
             for (let i of genome.sequence) {
-                expect(i).not.toBeLessThan(genome.options.minValue);
-                expect(i).not.toBeGreaterThan(genome.options.maxValue);
+                expect(i).not.toBeLessThan(options.minValue);
+                expect(i).not.toBeGreaterThan(options.maxValue);
             }
         });
 
@@ -30,7 +31,7 @@ describe('genome', () => {
 
         it('Should produce an array of numbers', () => {
             expect(genome.nucleotides.length)
-                .toEqual(genome.sequence.length / genome.options.nucleotideLength);
+                .toEqual(math.ceil(genome.sequence.length / genome.options.nucleotideLength));
         });
 
         it('Should produce an array of numbers between 0 and 1', () => {
