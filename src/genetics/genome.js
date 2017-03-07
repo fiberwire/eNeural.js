@@ -4,7 +4,7 @@ class Genome {
 
     constructor(options, sequence = []) {
         if (sequence === null || sequence.length === 0) {
-            sequence = this.randomSequence(options.sequenceLength);
+            sequence = this.randomSequence(options);
         }
 
         this.sequence = sequence;
@@ -29,11 +29,11 @@ class Genome {
     }
 
 
-    randomSequence(sequenceLength) {
+    randomSequence(options) {
         let seq = [];
 
-        for (let i = 0; i < sequenceLength; i++) {
-            seq.unshift(chance.floating({min: -1, max: 1}));
+        for (let i = 0; i < options.sequenceLength; i++) {
+            seq.unshift(chance.floating({min: options.minValue, max: options.maxValue}));
         }
 
         return seq;
