@@ -1,0 +1,22 @@
+{
+  "name": "eneural",
+  "version": "1.0.0",
+  "description": "Asycnhronous Neuroevolution for node",
+  "main": "main.js",
+  "scripts": {
+    "test": "jasmine",
+    "start": "node src/main.js"
+  },
+  "author": "Andrew Ramos",
+  "license": "MIT",
+  "dependencies": {
+    "chance": "^1.0.6",
+    "mathjs": "^3.10.0",
+    "require": "^2.4.20",
+    "rx": "^4.1.0",
+    "synaptic": "^1.0.8"
+  },
+  "devDependencies": {
+    "jasmine": "^2.5.3"
+  }
+}
