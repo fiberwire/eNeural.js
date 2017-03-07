@@ -1,0 +1,10 @@
+{
+  "sequenceLength": 10,
+  "nucleotideLength": 5,
+  "mutateChance": 0.5,
+  "inputSize": 1,
+  "minValue": -1,
+  "maxValue": 1,
+  "minHiddenLayers": 1,
+  "maxHiddenLayers": 10
+}
