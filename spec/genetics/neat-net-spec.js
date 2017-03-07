@@ -1,5 +1,5 @@
 require('jasmine');
-let NeatNet = require('../../src/genetics/neat-neat');
+let NeatNet = require('../../src/genetics/neat-net');
 let Genome = require('../../src/genetics/genome');
 let testOptions = require('../../src/options/test.json');
 
