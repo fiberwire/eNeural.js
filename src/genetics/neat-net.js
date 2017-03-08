@@ -34,6 +34,11 @@ class NeatNet {
         return net;
     }
 
+    mutate(){
+        this.genome = this.genome.mutate();
+        this.net = this.createNetwork();
+    }
+
     get weight() {
         let weight = this.lerp(
             this.options.minWeight,
