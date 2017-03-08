@@ -9,12 +9,18 @@ let math = require('mathjs');
 
 class NeatNet {
 
-    constructor(genome) {
+    constructor(genome, fitnessFunction) {
         this.genome = genome;
         this.options = genome.options;
         this.nucleotides = genome.nucleotides;
+        this.fitnessFunction = fitnessFunction;
 
         this.net = this.createNetwork();
+        console.log(this.fitness);
+    }
+
+    get fitness(){
+        return this.fitnessFunction(this);
     }
 
     createNetwork() {
