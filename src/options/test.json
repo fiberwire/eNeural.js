@@ -1,15 +1,14 @@
 {
-  "sequenceLength": 1000,
-  "nucleotideLength": 3,
-  "mutateChance": 0.5,
-  "inputSize": 1,
-  "outputSize": 1,
+  "nucleotideLength": 50,
+  "mutateChance": 0.05,
+  "inputSize": 10,
+  "outputSize": 7,
   "minValue": 0,
   "maxValue": 1,
-  "minHiddenLayers": 1,
-  "maxHiddenLayers": 2,
-  "minHiddenNeurons": 2,
-  "maxHiddenNeurons": 5,
+  "minHiddenLayers": 3,
+  "maxHiddenLayers": 5,
+  "minHiddenNeurons": 5,
+  "maxHiddenNeurons": 20,
   "minWeight": -1,
   "maxWeight": 1
 }
