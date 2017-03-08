@@ -1,8 +1,8 @@
 {
-  "nucleotideLength": 50,
+  "nucleotideLength": 10,
   "mutateChance": 0.05,
-  "inputSize": 10,
-  "outputSize": 7,
+  "inputSize": 2,
+  "outputSize": 1,
   "minValue": 0,
   "maxValue": 1,
   "minHiddenLayers": 3,
