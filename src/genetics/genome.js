@@ -32,7 +32,21 @@ class Genome {
     randomSequence(options) {
         let seq = [];
 
-        for (let i = 0; i < options.sequenceLength; i++) {
+        //number of nucleotides needed for biases (1 per neuron)
+        let biases = options.inputSize + options.maxHiddenLayers * options.maxHiddenNeurons + options.outputSize;
+
+        //number of nucleotides needed for weights (1 per connection between neurons)
+        let weights = options.inputSize * options.maxHiddenNeurons +
+                options.maxHiddenNeurons * options.maxHiddenNeurons * (options.maxHiddenLayers -1) +
+                options.outputSize * options.maxHiddenNeurons;
+
+        //number of nucleotides needed for setup (determines how many hidden layers, how many hidden neurons, etc
+        let setup = 10 + options.maxHiddenLayers;
+
+        //number of base values needed to generate enough nucleotides to support the network being created
+        let sequenceLength = (biases + weights + setup) * options.nucleotideLength;
+
+        for (let i = 0; i < sequenceLength; i++) {
             seq.unshift(chance.floating({min: options.minValue, max: options.maxValue}));
         }
 
