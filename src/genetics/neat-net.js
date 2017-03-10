@@ -5,44 +5,107 @@ let Neuron = synaptic.Neuron,
     Network = synaptic.Network,
     Trainer = synaptic.Trainer,
     Architect = synaptic.Architect;
+Perceptron = Architect.Perceptron;
 let math = require('mathjs');
+let Genome = require('./genome');
 
 class NeatNet {
 
-    constructor(genome, fitnessFunction) {
+    constructor(fitnessFunction, options, genome = null) {
+
+        if (genome === null){
+            genome = new Genome(options);
+        }
         this.genome = genome;
-        this.options = genome.options;
+        this.options = options;
         this.nucleotides = genome.nucleotides;
         this.fitnessFunction = fitnessFunction;
 
-        this.net = this.createNetwork();
+        //this.net = this.createNetwork();
+        this.net = this.constructNetwork();
         console.log(this.fitness);
     }
 
-    get fitness(){
-        return this.fitnessFunction(this);
+    get fitness() {
+        return this.fitnessFunction(this.net);
     }
 
-    createNetwork() {
+    constructNetwork() {
+        let net = new Perceptron(
+            this.options.inputSize,
+            this.numHiddenLayers,
+            this.options.outputSize
+        );
 
-        let input = this.inputLayer;
-        let hidden = this.hiddenLayers;
-        let output = this.outputLayer;
-
-        this.connectLayers(input, hidden, output);
-
-        let net = new Network({
-            input: input,
-            hidden: hidden,
-            output: output
-        });
+        net = this.mapGenome(net);
 
         return net;
     }
 
-    mutate(){
-        this.genome = this.genome.mutate();
-        this.net = this.createNetwork();
+    mapGenome(net) {
+        net = this.mapBiases(net);
+        net = this.mapWeights(net);
+
+        return net;
+    }
+
+    mapBiases(net) {
+
+        //map biases in input layer
+        this.mapLayerBiases(net.layers.input);
+
+        //map biases in hidden layers
+        net.layers.hidden.forEach(h => {
+           this.mapLayerBiases(h);
+        });
+
+        //map biases in output layer
+        this.mapLayerBiases(net.layers.output);
+
+        return net;
+    }
+
+    mapWeights(net) {
+
+        //map weights in input layer
+        this.mapLayerWeights(net.layers.input);
+
+        //map weights in hidden layers
+        net.layers.hidden.forEach(h => {
+            this.mapLayerWeights(h);
+        });
+
+        //map weights in output layer
+        this.mapLayerWeights(net.layers.output);
+
+        return net;
+    }
+
+    mapLayerWeights(layer) {
+        layer.neurons().forEach(neuron => {
+            for(let id in neuron.connections.projected){
+                let connection = neuron.connections.projected[id];
+                connection.weight = this.weight;
+            }
+        });
+    }
+
+    mapLayerBiases(layer){
+        layer.neurons().forEach(neuron => neuron.bias = this.weight);
+    }
+
+    mutate(maxFitness) {
+
+        let fitnessRatio = this.fitness/maxFitness;
+        console.log(`Fitness Ratio: ${fitnessRatio}`);
+        //mutate genome
+        this.genome = this.genome.mutate(fitnessRatio);
+
+        //refresh nucleotides with nucleotides from new genome
+        this.nucleotides = this.genome.nucleotides;
+
+        //reconstruct net
+        this.net = this.constructNetwork();
     }
 
     get weight() {
@@ -54,25 +117,7 @@ class NeatNet {
         return weight;
     }
 
-    //create and return input layer
-    get inputLayer() {
-        //create layer
-        let input = new Layer(this.options.inputSize);
-
-        //set biases for neurons
-        input.neurons().forEach(n => {
-            n.bias = this.weight;
-        });
-
-        return input;
-    }
-
-    //create and return hidden layers as an array of layers
-    get hiddenLayers() {
-
-        let layers = [];
-
-        //determine how many layers there should be
+    get numHiddenLayers() {
         let numLayers = math.round(
             this.lerp(
                 this.options.minHiddenLayers,
@@ -81,39 +126,7 @@ class NeatNet {
             )
         );
 
-        for (let i = 0; i < numLayers; i++) { //for each layer
-
-            //determine how many neurons the layer should have
-            let numNeurons = math.round(
-                this.lerp(
-                    this.options.minHiddenNeurons,
-                    this.options.maxHiddenNeurons,
-                    this.nucleotides.shift()
-                )
-            );
-
-            //create layer
-            let layer = new Layer(numNeurons);
-
-            //set biases of neurons
-            layer.neurons().forEach(n => {
-                n.bias = this.weight;
-            });
-
-            layers.unshift(layer);
-        }
-
-        return layers;
-    }
-
-    get outputLayer() {
-        let output = new Layer(this.options.outputSize);
-
-        output.neurons().forEach(n => {
-            n.bias = this.weight;
-        });
-
-        return output;
+        return numLayers;
     }
 
     getWeights(n) {
@@ -122,38 +135,6 @@ class NeatNet {
             weights.unshift(this.weight);
         }
         return weights;
-    }
-
-    connectLayers(input, hidden, output) {
-        this.connectInputToHidden(input, hidden);
-        this.connectHidden(hidden);
-        this.connectHiddenToOutput(hidden, output);
-    }
-
-    connectInputToHidden(input, hidden) {
-        input.project(
-            hidden[0],
-            Layer.connectionType.ALL_TO_ALL,
-            this.getWeights(input.neurons().length * hidden[0].neurons().length)
-        );
-    }
-
-    connectHidden(hidden) {
-        for (let i = 0; i < hidden.length - 1; i++) {
-            hidden[i].project(
-                hidden[i + 1],
-                Layer.connectionType.ALL_TO_ALL,
-                this.getWeights(hidden[i].neurons().length * hidden[i + 1].neurons().length)
-            );
-        }
-    }
-
-    connectHiddenToOutput(hidden, output) {
-        hidden[hidden.length - 1].project(
-            output,
-            Layer.connectionType.ALL_TO_ALL,
-            this.getWeights(hidden[hidden.length - 1].neurons().length * output.neurons().length)
-        );
     }
 
     lerp(min, max, t) {
